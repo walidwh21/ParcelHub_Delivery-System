@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Onboarding - Multi-Step Form</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS for additional styles -->
+    <style>
+        .form-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .btn-submit {
+            background-color: #3b82f6;
+            /* Tailwind's blue-500 */
+            color: #fff;
+            font-weight: bold;
+            padding: 0.5rem 2rem;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .border-red-500 {
+            border-color: #ef4444;
+            /* Tailwind's red-500 */
+        }
+
+        .btn-submit:hover {
+            background-color: #2563eb;
+            /* Tailwind's blue-600 */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+<div class="container mx-auto px-4">
+    <div class="form-container">
+
+        <!-- Service layer Errors (Global Errors) -->
+        <div th:if="${errorMessage}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <!-- Validation Errors (Server-Side) -->
+        <div th:if="${validationErrors}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul>
+                <li th:each="error : ${validationErrors}" th:text="${error}"></li>
+            </ul>
+        </div>
+
+
+        <!-- Step Progress Bar -->
+        <div class="flex justify-center mb-8">
+            <div class="w-full max-w-3xl">
+                <div class="flex items-center justify-between">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center relative">
+                        <div
+                                class="step-indicator w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+                            1
+                        </div>
+                        <div class="mt-2 text-sm font-medium text-gray-700">Personal Info</div>
+                        <!-- Progress Line -->
+                        <div class="progress-line absolute top-4 left-full w-12 h-0.5 bg-blue-500"></div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center relative">
+                        <div
+                                class="step-indicator w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-white font-bold">
+                            2
+                        </div>
+                        <div class="mt-2 text-sm font-medium text-gray-700">Vehicle Info</div>
+                        <!-- Progress Line -->
+                        <div class="progress-line absolute top-4 left-full w-12 h-0.5 bg-gray-300"></div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center relative">
+                        <div
+                                class="step-indicator w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-white font-bold">
+                            3
+                        </div>
+                        <div class="mt-2 text-sm font-medium text-gray-700">Documents</div>
+                        <!-- Progress Line -->
+                        <div class="progress-line absolute top-4 left-full w-12 h-0.5 bg-gray-300"></div>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="flex flex-col items-center">
+                        <div
+                                class="step-indicator w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-white font-bold">
+                            4
+                        </div>
+                        <div class="mt-2 text-sm font-medium text-gray-700">Declaration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/rider/onboarding}" th:object="${riderOnboardingDTO}" method="POST"
+              enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" name="riderId" th:value="${rider?.id}" />
+            <!-- Step 1: Personal Information -->
+            <div class="form-step active" id="step-1">
+                <div class="card">
+                    <div class="card-header">1. Personal Information</div>
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="dob" class="form-label">Date of Birth <span class="text-red-500">*</span></label>
+                                <input type="date" class="w-full p-2 border border-gray-300 rounded-md" id="dob"
+                                       name="dob" th:field="*{dateOfBirth}" required>
+                            </div>
+                            <div>
+                                <label for="gender" class="form-label">Gender <span class="text-red-500">*</span></label>
+                                <select class="w-full p-2 border border-gray-300 rounded-md" id="gender"
+                                        name="gender" th:field="*{gender}" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="MALE">Male</option>
+                                    <option value="FEMALE">Female</option>
+                                    <option value="THIRD">Third</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="address" class="form-label">Residential Address <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md" id="address"
+                                       name="address" th:field="*{address}" required>
+                            </div>
+                            <div>
+                                <label for="thana" class="form-label">Thana/Upazila <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md" id="thana"
+                                       name="thana" th:field="*{upazila}" required>
+                            </div>
+                            <div>
+                                <label for="district" class="form-label">District <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="district" name="district" th:field="*{district}" required>
+                            </div>
+                            <div>
+                                <label for="postalCode" class="form-label">Postal Code <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="postalCode" name="postalCode" th:field="*{postalCode}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="button" class="btn-submit" disabled>Previous</button>
+                    <button type="button" class="btn-submit next-step" data-next="2">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Vehicle Information -->
+            <div class="form-step" id="step-2">
+                <div class="card">
+                    <div class="card-header">2. Vehicle Information</div>
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="vehicleType" class="form-label">Vehicle Type <span class="text-red-500">*</span></label>
+                                <select class="w-full p-2 border border-gray-300 rounded-md" id="vehicleType"
+                                        name="vehicleType" th:field="*{vehicleType}" required>
+                                    <option value="">Select Vehicle Type</option>
+                                    <option value="MOTORCYCLE">Motorcycle</option>
+                                    <option value="BYCYCLE">Bicycle</option>
+                                    <option value="CAR">Car</option>
+                                    <option value="SCOOTER">Scooter</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="vehicleModel" class="form-label">Vehicle Make/Model <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="vehicleModel" th:field="*{vehicleModel}" name="vehicleModel" required>
+                            </div>
+                            <div>
+                                <label for="registrationNumber" class="form-label">Vehicle Registration
+                                    Number <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="registrationNumber" name="registrationNumber"
+                                       th:field="*{vehicleRegistrationNumber}" required>
+                            </div>
+                            <div>
+                                <label for="insuranceProvider" class="form-label">Vehicle Insurance Provider <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="insuranceProvider" th:field="*{vehicleInsuranceProvider}"
+                                       name="insuranceProvider" required>
+                            </div>
+                            <div>
+                                <label for="insuranceExpiry" class="form-label">Insurance Expiry Date <span class="text-red-500">*</span></label>
+                                <input type="date" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="insuranceExpiry" th:field="*{insuranceExpiryDate}" name="insuranceExpiry" required>
+                            </div>
+                            <div>
+                                <label for="registrationDoc" class="form-label">Upload Vehicle Registration
+                                    Document <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="registrationDoc" th:field="*{vehicleRegistrationDocument}"
+                                       name="registrationDoc" required>
+                            </div>
+                            <div>
+                                <label for="insuranceDoc" class="form-label">Upload Insurance Document <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="insuranceDoc" th:field="*{insuranceDocument}" name="insuranceDoc" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="button" class="btn-submit prev-step" data-prev="1">Previous</button>
+                    <button type="button" class="btn-submit next-step" data-next="3">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Identification Documents -->
+            <div class="form-step" id="step-3">
+                <div class="card">
+                    <div class="card-header">3. Identification Documents</div>
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nationalId" class="form-label">National ID Number <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="nationalId" th:field="*{nationalIdNumber}" name="nationalId" required>
+                            </div>
+                            <div>
+                                <label for="licenseNumber" class="form-label">Driver’s License Number <span class="text-red-500">*</span></label>
+                                <input type="text" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="licenseNumber" th:field="*{driversLicenseNumber}" name="licenseNumber" required>
+                            </div>
+                            <div>
+                                <label for="nationalIdFront" class="form-label">Upload National ID Document
+                                    (Front) <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="nationalIdFront" th:field="*{nationalIdFront}" name="nationalIdFront" required>
+                            </div>
+                            <div>
+                                <label for="nationalIdBack" class="form-label">Upload National ID Document
+                                    (Back) <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="nationalIdBack" th:field="*{nationalIdBack}" name="nationalIdBack" required>
+                            </div>
+                            <div>
+                                <label for="licenseFront" class="form-label">Upload Driver’s License (Front) <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="licenseFront" th:field="*{driversLicenseFront}" name="licenseFront" required>
+                            </div>
+                            <div>
+                                <label for="licenseBack" class="form-label">Upload Driver’s License (Back) <span class="text-red-500">*</span></label>
+                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="licenseBack" th:field="*{driversLicenseBack}" name="licenseBack" required>
+                            </div>
+                            <div>
+                                <label for="LicenseExpiry" class="form-label">License Expiry Date <span class="text-red-500">*</span></label>
+                                <input type="date" class="w-full p-2 border border-gray-300 rounded-md"
+                                       id="LicenseExpiry" th:field="*{licenseExpiryDate}" name="LicenseExpiry" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="button" class="btn-submit prev-step" data-prev="2">Previous</button>
+                    <button type="button" class="btn-submit next-step" data-next="4">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Declaration and Consent -->
+            <div class="form-step" id="step-4">
+                <div class="card">
+                    <div class="card-header">4. Declaration and Consent</div>
+                    <div class="card-body">
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-500"
+                                       id="accuracyCheck" name="accuracyCheck" required>
+                                <label for="accuracyCheck" class="ml-2">I confirm that all the information provided
+                                    is accurate and up-to-date.</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-500" id="termsCheck"
+                                       name="termsCheck" required>
+                                <label for="termsCheck" class="ml-2">I agree to the Terms of Service and Privacy
+                                    Policy.</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="button" class="btn-submit prev-step" data-prev="3">Previous</button>
+                    <button type="submit" class="btn-submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Multi-Step Form -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const steps = document.querySelectorAll('.form-step');
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+        const progressLines = document.querySelectorAll('.progress-line');
+        let currentStep = 0;
+
+        function showStep(stepIndex) {
+            // Show/hide steps
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === stepIndex);
+            });
+
+            // Update progress bar
+            stepIndicators.forEach((indicator, index) => {
+                if (index <= stepIndex) {
+                    indicator.classList.remove('bg-gray-300');
+                    indicator.classList.add('bg-blue-500');
+                } else {
+                    indicator.classList.remove('bg-blue-500');
+                    indicator.classList.add('bg-gray-300');
+                }
+            });
+
+            progressLines.forEach((line, index) => {
+                if (index < stepIndex) {
+                    line.classList.remove('bg-gray-300');
+                    line.classList.add('bg-blue-500');
+                } else {
+                    line.classList.remove('bg-blue-500');
+                    line.classList.add('bg-gray-300');
+                }
+            });
+        }
+
+        function validateStep(stepIndex) {
+            const currentStepElement = steps[stepIndex];
+            const requiredInputs = currentStepElement.querySelectorAll(
+                'input[required], select[required], textarea[required]');
+
+            let isValid = true;
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('border-red-500'); // Highlight missing fields
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            });
+
+            return isValid;
+        }
+
+        document.querySelectorAll('.next-step').forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentStep < steps.length - 1 && validateStep(currentStep)) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        document.querySelectorAll('.prev-step').forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        // Initialize first step
+        showStep(currentStep);
+    });
+</script>
+</body>
+
+</html>

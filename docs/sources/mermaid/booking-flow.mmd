@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    actor Customer
+    participant UI as UserController
+    participant S as ShipmentService
+    participant G as GatewayPaymentService
+    participant PG as Payment gateway
+    participant CB as GatewayCallbackController
+    participant DB as PostgreSQL
+
+    Customer->>UI: POST /user/book-parcel
+    UI->>S: issueTransactionRef(), createBooking()
+    S->>DB: insert parcel (UNPAID, tracking code)
+    UI->>S: recordPendingPayment()
+    S->>DB: insert payment (PENDING)
+    UI->>G: getPaymentUrl()
+    G->>PG: create session
+    PG-->>Customer: redirect to hosted checkout
+    Customer->>PG: pay
+    PG->>CB: POST /sslcommerz/success
+    CB->>G: orderValidate() (server-to-server)
+    G->>PG: validation request
+    PG-->>G: VALID
+    CB->>DB: payment SUCCESS, parcel BOOKED
+    CB-->>Customer: redirect to dashboard

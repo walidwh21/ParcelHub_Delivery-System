@@ -1,0 +1,16 @@
+INSERT INTO productcategory (id, category, created_at, updated_at) VALUES
+                                                                       (gen_random_uuid(), 'Medicines & Health Supplies', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Documents & Paperwork', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Mobile Devices & Accessories', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Computer & Office Supplies', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Gifts & Handcrafted Items', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Perishable Food Items', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Footwear', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Jewelry & Watches', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Pet Supplies', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Art & Collectibles', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Industrial Tools & Parts', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Musical Instruments', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Baby Products', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Gardening Supplies', NOW(), NOW()),
+                                                                       (gen_random_uuid(), 'Bags & Luggage', NOW(), NOW());

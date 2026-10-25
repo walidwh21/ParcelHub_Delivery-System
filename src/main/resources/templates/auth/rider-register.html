@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Registration</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- intl-tel-input CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px; /* Wider form container */
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem; /* Smaller padding */
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+            padding-left: 2.5rem; /* Space for icons */
+            font-size: 0.875rem; /* Smaller font size */
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-label {
+            font-size: 0.875rem; /* Smaller font size */
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.5rem; /* Smaller padding */
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            font-size: 0.875rem; /* Smaller font size */
+        }
+
+        .btn-submit:hover {
+            background-color: #2563eb;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.875rem; /* Smaller icon size */
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem; /* Smaller error message */
+            margin-top: 0.25rem;
+        }
+
+        /* intl-tel-input customization */
+        .iti {
+            width: 100%;
+        }
+
+        .iti__flag-container {
+            padding-left: 0.75rem;
+        }
+
+        .iti__selected-flag {
+            padding: 0.5rem; /* Smaller padding */
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+<div class="form-container">
+    <!-- Delivery Rider Icon -->
+    <div class="text-center mb-6">
+        <i class="fas fa-motorcycle text-4xl text-blue-500"></i> <!-- Smaller icon -->
+    </div>
+
+    <h1 class="text-xl font-bold text-center text-gray-800 mb-6">Rider Registration</h1> <!-- Smaller heading -->
+
+    <form th:action="@{/rider/register}" th:object="${riderRegistrationRequestDTO}" method="POST"
+          onsubmit="return validateForm()">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+
+        <!-- Service layer Errors (Global Errors) -->
+        <div th:if="${errorMessage}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+
+        <!-- Validation Errors (Server-Side) -->
+        <div th:if="${validationErrors}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul>
+                <li th:each="error : ${validationErrors}" th:text="${error}"></li>
+            </ul>
+        </div>
+
+
+        <!-- Full Name -->
+        <div class="mb-4 relative">
+            <label for="fullName" class="form-label">Full Name</label>
+            <div class="relative">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-input"
+                       placeholder="Enter your full name" required>
+            </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="mb-4 relative">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <div class="relative">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="tel" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}" class="form-input"
+                       placeholder="Enter your phone number" required>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4 relative">
+            <label for="email" class="form-label">Email</label>
+            <div class="relative">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="email" name="email" th:field="*{email}" class="form-input"
+                       placeholder="Enter your email" required>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4 relative">
+            <label for="password" class="form-label">Password</label>
+            <div class="relative">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" name="password" th:field="*{password}" class="form-input"
+                       placeholder="Enter your password" required>
+            </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-6 relative">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <div class="relative">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                       placeholder="Confirm your password" required>
+            </div>
+            <div id="password-error" class="error-message"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">Register</button>
+    </form>
+
+    <!-- Login Link -->
+    <p class="text-center text-sm text-gray-600 mt-4">
+        Already have an account? <a href="/rider/login" class="text-blue-500 hover:underline">Login here</a>.
+    </p>
+</div>
+
+<!-- intl-tel-input JS -->
+<script src="/js/intlTelInput.min.js"></script>
+<!-- Password Validation Script -->
+<script>
+    // Initialize intl-tel-input
+    const phoneInput = document.getElementById('phoneNumber');
+    const iti = window.intlTelInput(phoneInput, {
+        initialCountry: 'bd', // Set default country to Bangladesh
+        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js',
+    });
+
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorMessage = document.getElementById('password-error');
+
+        // Validate password match
+        if (password !== confirmPassword) {
+            errorMessage.textContent = 'Passwords do not match.';
+            return false; // Prevent form submission
+        }
+
+        // Validate phone number
+        if (!iti.isValidNumber()) {
+            errorMessage.textContent = 'Please enter a valid phone number.';
+            return false; // Prevent form submission
+        }
+
+        errorMessage.textContent = '';
+        return true; // Allow form submission
+    }
+</script>
+</body>
+
+</html>

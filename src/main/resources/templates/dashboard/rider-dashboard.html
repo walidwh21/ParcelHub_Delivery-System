@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Dashboard - Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <style>
+        /* Toggle ON (checked) */
+        input:checked + div {
+            background-color: #4ade80; /* Green */
+        }
+
+        /* Fully shift dot to the right when checked */
+        input:checked + div + .dot {
+            transform: translateX(100%);
+            background-color: #fff;
+        }
+
+        .dot {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 w-full min-h-screen flex">
+<div th:replace="~{fragments/sidebar-rider.html}"></div>
+
+<div class="flex-1 flex flex-col">
+    <div th:replace="~{fragments/navbar-rider.html}"></div>
+    <!-- Main content -->
+    <div class="container  mx-auto px-6 py-8">
+        <!-- Page Header -->
+        <div
+                class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+            <h2 class="text-2xl font-bold text-gray-800">Overview</h2>
+        </div>
+
+
+        <!------------------------------------------------------------>
+        <h2 class="text-2xl font-bold text-gray-800">Welcome,
+            <span th:text="${riderDashboardResponseDTO.fullName}"></span>
+        </h2>
+
+        <p class="text-gray-700">Verification Status:
+            <span th:text="${riderDashboardResponseDTO.verificationStatus}"
+                  th:classappend="${riderDashboardResponseDTO.verificationStatus == 'VERIFIED'} ? 'text-green-600' : 'text-red-600'">
+        </span>
+        </p>
+
+        <p class="text-gray-700">Average Rating:
+            <span th:text="${riderDashboardResponseDTO.riderAvgRating}"></span>
+        </p>
+
+        <p class="text-gray-700">Balance:
+            <span th:text="${riderDashboardResponseDTO.riderBalance} + ' BDT'"></span>
+        </p>
+
+
+        <!------------------------------------------->
+
+
+        <div class="flex items-center space-x-4">
+            <span class="text-lg font-semibold text-gray-700">Delivery Status:</span>
+            <label for="toggleStatus" class="relative cursor-pointer">
+                <input type="checkbox" id="toggleStatus" class="sr-only"
+                       th:checked="${riderDashboardResponseDTO.isAvailable}"
+                       th:attr="data-status=${riderDashboardResponseDTO.isAvailable}" onchange="confirmToggle(this)">
+                <div class="block w-14 h-8 rounded-full bg-gray-300"></div>
+                <div class="dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white transition transform"></div>
+            </label>
+            <span id="statusText" class="text-lg font-semibold"
+                  th:text="${riderDashboardResponseDTO.isAvailable ? 'Available' : 'Unavailable'}"
+                  th:classappend="${riderDashboardResponseDTO.isAvailable} ? 'text-green-600' : 'text-red-600'">
+                </span>
+        </div>
+
+        <form id="statusForm" method="POST" th:action="@{/rider/status}">
+            <input type="hidden" name="status">
+        </form>
+
+
+    </div>
+</div>
+<script>
+    function confirmToggle(checkbox) {
+        let isChecked = checkbox.checked;
+        let newStatus1 = isChecked ? "Available" : "Unavailable";
+        let newStatus2 = isChecked ? 'true' : 'false';
+
+
+        if (confirm(`Are you sure you want to change your status to ${newStatus1}?`)) {
+            updateStatus(isChecked);
+
+            document.getElementById("statusForm").status.value = newStatus2;
+            document.getElementById("statusForm").submit();
+
+        } else {
+            checkbox.checked = !isChecked; // Revert change if canceled
+        }
+    }
+
+    function updateStatus(isAvailable) {
+        let statusText = document.getElementById("statusText");
+
+        if (isAvailable) {
+            statusText.innerText = "Available";
+            statusText.classList.remove("text-red-600");
+            statusText.classList.add("text-green-600");
+        } else {
+            statusText.innerText = "Unavailable";
+            statusText.classList.remove("text-green-600");
+            statusText.classList.add("text-red-600");
+        }
+
+        // TODO: Send an AJAX request to update rider status in the backend
+        console.log("Status updated to:", isAvailable ? "Available" : "Unavailable");
+    }
+
+
+    // Traffic Chart
+    const trafficCtx = document.getElementById('trafficflow').getContext('2d');
+    new Chart(trafficCtx, {
+        type: 'line', // Line chart
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Website Visitors',
+                data: [500, 700, 1200, 1500, 1800, 2000],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Sales Chart
+    const salesCtx = document.getElementById('sales').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'bar', // Bar chart
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Sales ($)',
+                data: [8000, 9000, 11000, 14000, 16000, 19000],
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+</body>
+
+</html>

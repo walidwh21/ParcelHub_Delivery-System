@@ -1,0 +1,52 @@
+name: CI with SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      # Checkout the code
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Set up JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Ensure gradlew is executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Cache Gradle dependencies
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # Build and run tests with Gradle
+      - name: Build and Test
+        run: ./gradlew build jacocoTestReport --info
+
+      # Run SonarQube analysis
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew sonar --info

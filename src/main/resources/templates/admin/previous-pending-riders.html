@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Heroicons for icons -->
+    <script src="https://unpkg.com/heroicons@2.1.1/dist/heroicons.js"></script>
+</head>
+
+<body class="bg-gray-100 w-full min-h-screen flex">
+<div th:replace="~{fragments/sidebar-admin.html}"></div>
+
+<div class="flex-1 flex flex-col">
+    <div th:replace="~{fragments/navbar-admin.html}"></div>
+
+    <!-- Main content -->
+    <div class="container mx-auto px-6 py-8">
+        <!-- Page Header -->
+        <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold mb-4">Approval Pending Riders</h1>
+
+            <!-- Messages -->
+            <div th:if="${message}" class="mb-4 p-2 bg-green-100 text-green-700 rounded">
+                <span th:text="${message}"></span>
+            </div>
+            <div th:if="${error}" class="mb-4 p-2 bg-red-100 text-red-700 rounded">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Rider List -->
+            <table class="w-full border-collapse">
+                <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-2">ID</th>
+                    <th class="p-2">Full Name</th>
+                    <th class="p-2">Email</th>
+                    <th class="p-2">Phone</th>
+                    <th class="p-2">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rider : ${riders}">
+                    <td class="p-2" th:text="${rider.id}"></td>
+                    <td class="p-2" th:text="${rider.fullName}"></td>
+                    <td class="p-2" th:text="${rider.email}"></td>
+                    <td class="p-2" th:text="${rider.phoneNumber}"></td>
+                    <td class="p-2 text-center">
+                        <div class="flex justify-center space-x-2">
+                            <!-- View Button -->
+                            <a th:href="@{/admin/rider/view/{id}(id=${rider.id})}"
+                               class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                </svg>
+                                View
+                            </a>
+
+                            <!-- Approve Button -->
+                            <form th:action="@{/admin/rider/approve}" method="post" class="inline"
+                                  onsubmit="return confirmApprove()">
+                                <input type="hidden" name="riderId" th:value="${rider.id}">
+                                <button type="submit"
+                                        class="inline-flex items-center px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600">
+                                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Approve
+                                </button>
+                            </form>
+
+                            <!-- Reject Button -->
+                            <form th:action="@{/admin/rider/reject}" method="post" class="inline"
+                                  onsubmit="return confirmReject()">
+                                <input type="hidden" name="riderId" th:value="${rider.id}">
+                                <button type="submit"
+                                        class="inline-flex items-center px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600">
+                                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(riders)}">
+                    <td colspan="5" class="p-2 text-center">No pending riders</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Confirm Approve Action
+    function confirmApprove() {
+        return confirm("Are you sure you want to approve this rider?");
+    }
+
+    // Confirm Reject Action
+    function confirmReject() {
+        return confirm("Are you sure you want to reject this rider?");
+    }
+</script>
+</body>
+
+</html>

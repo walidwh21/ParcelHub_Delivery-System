@@ -1,0 +1,63 @@
+erDiagram
+    USERS ||--o{ USER_ROLES : has
+    USERS ||--o| RIDERS : "extends (joined)"
+    USERS ||--o{ PARCELS : sends
+    RIDERS ||--o{ PARCELS : delivers
+    PRODUCTCATEGORY ||--o{ PARCELS : classifies
+    PARCELS ||--o| PAYMENT : "paid by"
+    USERS ||--o{ PAYMENT : makes
+
+    USERS {
+        uuid id PK
+        string full_name
+        string email UK
+        string password
+        string phone_number
+        string profile_picture
+        timestamp created_at
+        timestamp updated_at
+    }
+    USER_ROLES {
+        uuid user_id FK
+        string role "ADMIN | USER | RIDER"
+    }
+    RIDERS {
+        uuid id PK, FK
+        date date_of_birth
+        string vehicle_type
+        string national_id_number
+        string verification_status "PENDING | VERIFIED | REJECTED"
+        boolean is_available
+        boolean is_assigned
+        double rider_balance
+        double rider_avg_rating
+    }
+    PRODUCTCATEGORY {
+        uuid id PK
+        string category
+    }
+    PARCELS {
+        uuid id PK
+        uuid sender_id FK
+        uuid rider_id FK
+        uuid category_id FK
+        string tracking_id UK
+        string status
+        double weight
+        double size
+        double distance
+        decimal price
+        string receiver_name
+        string receiver_phone
+        timestamp assigned_at
+        timestamp delivered_at
+    }
+    PAYMENT {
+        uuid id PK
+        uuid user_id FK
+        uuid parcel_id FK
+        string transaction_id
+        decimal amount
+        string currency
+        string payment_status
+    }

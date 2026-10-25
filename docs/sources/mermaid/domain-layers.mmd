@@ -1,0 +1,38 @@
+classDiagram
+    direction LR
+    class ShipmentService {
+        +createBooking(request) Parcel
+        +recordPendingPayment(parcel, request)
+        +issueTrackingCode() String
+        +updateParcelStatus(id, status)
+        +estimateShippingCost(quote) double
+    }
+    class RiderService {
+        +registerRider(request) Rider
+        +onboardRider(id, request) Rider
+        +currentParcelsForRider() List
+        +acceptParcelDelivery(parcelId)
+    }
+    class UserService {
+        +registerUser(request) String
+        +updateUserProfile(form) boolean
+    }
+    class GatewayPaymentService {
+        +getPaymentUrl(request, sender) String
+        +orderValidate(...) boolean
+    }
+    class Account
+    class Rider
+    class Parcel
+    class Payment
+    class ParcelCategory
+    Account <|-- Rider
+    Account "1" --> "*" Parcel : sender
+    Rider "1" --> "*" Parcel : delivers
+    ParcelCategory "1" --> "*" Parcel
+    Parcel "1" --> "0..1" Payment
+    ShipmentService --> Parcel
+    ShipmentService --> Payment
+    RiderService --> Rider
+    UserService --> Account
+    GatewayPaymentService ..> Payment

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{master-layout-user}">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Parcel | Fast Courier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles that work with Tailwind CDN */
+        .payment-option.selected {
+            border-color: #6366F1;
+            background-color: #EEF2FF;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .payment-option .checkmark {
+            display: none;
+        }
+
+        .payment-option.selected .checkmark {
+            display: block;
+            color: #6366F1;
+        }
+
+        details[open] .summary-chevron {
+            transform: rotate(180deg);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        details[open] > div {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+<!-- Content Fragment -->
+<div layout:fragment="content" class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Main Form Heading with Breadcrumb -->
+
+    <div class="bg-white p-6 shadow-lg rounded-xl border border-gray-100">
+        <div class="mb-8 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 border-b-4 border-indigo-600 pb-2 inline-block px-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 inline-block mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Parcel Details
+            </h2>
+        </div>
+
+        <form th:action="@{/user/book-parcel}" th:object="${bookingRequest}" method="post" class="space-y-8">
+            <!-- Parcel Information Section -->
+            <details open class="group">
+                <summary class="text-xl font-semibold text-gray-800 flex items-center focus:outline-none cursor-pointer">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>Parcel Information</span>
+                        <svg class="summary-chevron w-5 h-5 text-gray-500 ml-2 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Product Category Dropdown -->
+                    <div>
+                        <label for="categoryId" class="block text-sm font-medium text-gray-700 mb-1">
+                            Product Category <span class="text-red-500">*</span>
+                        </label>
+                        <select id="categoryId" th:field="*{categoryId}" required
+                                class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                            <option value="" disabled selected>Select a category</option>
+                            <option th:each="category : ${productCategories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.category}">
+                            </option>
+                        </select>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('categoryId')}"></div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                            Description
+                        </label>
+                        <textarea id="description" th:field="*{description}" rows="3"
+                                  class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"></textarea>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('description')}"></div>
+                    </div>
+
+                    <!-- Weight -->
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">
+                            Weight (kg) <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.01" min="0.1" id="weight" th:field="*{weight}" required
+                                   class="mt-1 block w-full px-4 py-2.5 pl-12 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="0.00" />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">kg</span>
+                            </div>
+                        </div>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('weight')}"></div>
+                    </div>
+
+                    <!-- Size -->
+                    <div>
+                        <label for="size" class="block text-sm font-medium text-gray-700 mb-1">
+                            Size (m²) <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.01" min="0.01" id="size" th:field="*{size}" required
+                                   class="mt-1 block w-full px-4 py-2.5 pl-12 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="0.00" />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">m²</span>
+                            </div>
+                        </div>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('size')}"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Pickup Address Section -->
+            <details open class="group">
+                <summary class="text-xl font-semibold text-gray-800 flex items-center focus:outline-none cursor-pointer">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Pickup Address</span>
+                        <svg class="summary-chevron w-5 h-5 text-gray-500 ml-2 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Pickup Division -->
+                    <div>
+                        <label for="pickupDivision" class="block text-sm font-medium text-gray-700 mb-1">
+                            Division <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="pickupDivision" th:field="*{pickupDivision}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('pickupDivision')}"></div>
+                    </div>
+
+                    <!-- Pickup District -->
+                    <div>
+                        <label for="pickupDistrict" class="block text-sm font-medium text-gray-700 mb-1">
+                            District <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="pickupDistrict" th:field="*{pickupDistrict}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('pickupDistrict')}"></div>
+                    </div>
+
+                    <!-- Pickup Upazila -->
+                    <div>
+                        <label for="pickupUpazila" class="block text-sm font-medium text-gray-700 mb-1">
+                            Upazila <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="pickupUpazila" th:field="*{pickupUpazila}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('pickupUpazila')}"></div>
+                    </div>
+
+                    <!-- Pickup Village -->
+                    <div>
+                        <label for="pickupVillage" class="block text-sm font-medium text-gray-700 mb-1">
+                            Village/Area <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="pickupVillage" th:field="*{pickupVillage}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('pickupVillage')}"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Receiver Information Section -->
+            <details open class="group">
+                <summary class="text-xl font-semibold text-gray-800 flex items-center focus:outline-none cursor-pointer">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Receiver Information</span>
+                        <svg class="summary-chevron w-5 h-5 text-gray-500 ml-2 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Receiver Name -->
+                    <div>
+                        <label for="receiverName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Full Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="receiverName" th:field="*{receiverName}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Receiver's full name" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverName')}"></div>
+                    </div>
+
+                    <!-- Receiver Phone -->
+                    <div>
+                        <label for="receiverPhone" class="block text-sm font-medium text-gray-700 mb-1">
+                            Phone Number <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">+88</span>
+                            </div>
+                            <input type="tel" id="receiverPhone" th:field="*{receiverPhone}" required
+                                   class="mt-1 block w-full px-4 py-2.5 pl-14 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="01XXXXXXXXX" />
+                        </div>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverPhone')}"></div>
+                    </div>
+
+                    <!-- Receiver Email -->
+                    <div>
+                        <label for="receiverEmail" class="block text-sm font-medium text-gray-700 mb-1">
+                            Email Address
+                        </label>
+                        <input type="email" id="receiverEmail" th:field="*{receiverEmail}"
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="optional@example.com" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverEmail')}"></div>
+                    </div>
+
+                    <!-- Receiver Division -->
+                    <div>
+                        <label for="receiverDivision" class="block text-sm font-medium text-gray-700 mb-1">
+                            Division <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="receiverDivision" th:field="*{receiverDivision}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverDivision')}"></div>
+                    </div>
+
+                    <!-- Receiver District -->
+                    <div>
+                        <label for="receiverDistrict" class="block text-sm font-medium text-gray-700 mb-1">
+                            District <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="receiverDistrict" th:field="*{receiverDistrict}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverDistrict')}"></div>
+                    </div>
+
+                    <!-- Receiver Upazila -->
+                    <div>
+                        <label for="receiverUpazila" class="block text-sm font-medium text-gray-700 mb-1">
+                            Upazila <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="receiverUpazila" th:field="*{receiverUpazila}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverUpazila')}"></div>
+                    </div>
+
+                    <!-- Receiver Village -->
+                    <div>
+                        <label for="receiverVillage" class="block text-sm font-medium text-gray-700 mb-1">
+                            Village/Area <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="receiverVillage" th:field="*{receiverVillage}" required
+                               class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('receiverVillage')}"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Billing Section -->
+            <details open class="group">
+                <summary class="text-xl font-semibold text-gray-800 flex items-center focus:outline-none cursor-pointer">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Billing & Payment</span>
+                        <svg class="summary-chevron w-5 h-5 text-gray-500 ml-2 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Price -->
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
+                            Delivery Cost <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.01" id="price" th:field="*{price}" required readonly
+                                   class="mt-1 block w-full px-4 py-2.5 pl-12 border border-gray-300 rounded-lg shadow-sm bg-gray-50 text-gray-600" />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">৳</span>
+                            </div>
+                        </div>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('price')}"></div>
+                    </div>
+
+                    <!-- Distance -->
+                    <div>
+                        <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
+                            Distance (km) <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.1" min="1" id="distance" th:field="*{distance}" required
+                                   class="mt-1 block w-full px-4 py-2.5 pl-16 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">km</span>
+                            </div>
+                        </div>
+                        <div th:replace="~{fragments/field-error-fragment :: fieldError('distance')}"></div>
+                    </div>
+                </div>
+
+                <!-- Payment Type Selection -->
+                <div class="mt-8">
+                    <label class="block text-lg font-semibold text-gray-700 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        Select Payment Method <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Bkash Payment -->
+                        <label class="relative border-2 rounded-xl shadow-sm cursor-pointer p-4 hover:border-indigo-300 transition flex flex-col items-center justify-center h-full payment-option">
+                            <input type="radio" name="paymentMethod" th:field="*{paymentMethod}" value="bkash" class="hidden" required />
+                            <img src="/images/bkash_payment.png" alt="bKash Payment" class="h-12 mx-auto mb-2">
+                            <span class="text-sm font-medium text-gray-700 mt-1">bKash</span>
+                            <svg class="checkmark absolute top-2 right-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </label>
+
+                        <!-- Rocket Payment -->
+                        <label class="relative border-2 rounded-xl shadow-sm cursor-pointer p-4 hover:border-indigo-300 transition flex flex-col items-center justify-center h-full payment-option">
+                            <input type="radio" name="paymentMethod" th:field="*{paymentMethod}" value="dbblmobilebanking" class="hidden" required />
+                            <img src="/images/rocket_payment.png" alt="Rocket Payment" class="h-12 mx-auto mb-2">
+                            <span class="text-sm font-medium text-gray-700 mt-1">Rocket</span>
+                            <svg class="checkmark absolute top-2 right-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </label>
+
+                        <!-- VISA Payment -->
+                        <label class="relative border-2 rounded-xl shadow-sm cursor-pointer p-4 hover:border-indigo-300 transition flex flex-col items-center justify-center h-full payment-option">
+                            <input type="radio" name="paymentMethod" th:field="*{paymentMethod}" value="visacard" class="hidden" required />
+                            <img src="/images/visa_payment.png" alt="VISA Card Payment" class="h-12 mx-auto mb-2">
+                            <span class="text-sm font-medium text-gray-700 mt-1">Credit/Debit Card</span>
+                            <svg class="checkmark absolute top-2 right-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </label>
+                    </div>
+                    <div th:replace="~{fragments/field-error-fragment :: fieldError('paymentMethod')}"></div>
+                </div>
+            </details>
+
+            <!-- Terms and Conditions -->
+            <div class="flex items-start">
+                <div class="flex items-center h-5">
+                    <input id="terms" name="terms" type="checkbox" required
+                           class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="terms" class="font-medium text-gray-700">
+                        I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>
+                        and <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-indigo-800 shadow-md transition duration-300 transform hover:scale-[1.01] submit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    Pay <span id="submitPrice" class="font-bold">300</span> TK & Book Parcel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Extra Scripts Fragment -->
+<div layout:fragment="extraScripts">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Enhanced payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+
+                // Highlight on hover
+                option.addEventListener('mouseenter', () => {
+                    if (!radio.checked) {
+                        option.classList.add('border-indigo-300');
+                    }
+                });
+
+                option.addEventListener('mouseleave', () => {
+                    if (!radio.checked) {
+                        option.classList.remove('border-indigo-300');
+                    }
+                });
+
+                // Update selection
+                radio.addEventListener('change', function() {
+                    paymentOptions.forEach(opt => {
+                        opt.classList.remove('selected', 'border-indigo-300');
+                    });
+                    if (radio.checked) {
+                        option.classList.add('selected');
+                    }
+                });
+
+                // Initialize selected state
+                if (radio.checked) {
+                    option.classList.add('selected');
+                }
+            });
+
+            // Enhanced shipping cost calculation
+            const sizeInput = document.getElementById("size");
+            const weightInput = document.getElementById("weight");
+            const priceInput = document.getElementById("price");
+            const submitPrice = document.getElementById("submitPrice");
+            const distanceInput = document.getElementById("distance");
+
+            // Get CSRF token and header from meta tags
+            const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+            const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+            // Debounce function to limit API calls
+            function debounce(func, wait) {
+                let timeout;
+                return function() {
+                    const context = this, args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+
+            // Calculate shipping cost
+            const estimateShippingCost = debounce(function() {
+                const size = parseFloat(sizeInput.value);
+                const weight = parseFloat(weightInput.value);
+                const distance = parseFloat(distanceInput.value);
+
+                if (size && weight && distance) {
+                    // Show loading state
+                    priceInput.value = "Calculating...";
+
+                    fetch("/parcel/shipping-cost", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            [csrfHeader]: csrfToken
+                        },
+                        body: JSON.stringify({
+                            size: size,
+                            weight: weight,
+                            distance: distance
+                        }),
+                        credentials: "include"
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const cost = data;
+                            priceInput.value = cost.toFixed(2);
+                            submitPrice.textContent = cost.toFixed(2);
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            priceInput.value = "";
+                            submitPrice.textContent = "300";
+                            // Show error to user
+                            const errorElement = document.createElement('div');
+                            errorElement.className = 'mt-2 text-sm text-red-600';
+                            errorElement.textContent = 'Failed to calculate shipping cost. Using default rate.';
+                            if (!priceInput.nextElementSibling.classList.contains('text-red-600')) {
+                                priceInput.parentNode.insertBefore(errorElement, priceInput.nextElementSibling);
+                            }
+                        });
+                }
+            }, 500);
+
+            // Add event listeners
+            sizeInput.addEventListener("input", estimateShippingCost);
+            weightInput.addEventListener("input", estimateShippingCost);
+            distanceInput.addEventListener("input", estimateShippingCost);
+
+            // Initialize calculation if fields have values
+            if (sizeInput.value && weightInput.value && distanceInput.value) {
+                estimateShippingCost();
+            }
+
+            // Animate form sections when opened
+            document.querySelectorAll('details').forEach(details => {
+                details.addEventListener('toggle', function() {
+                    if (this.open) {
+                        const content = this.querySelector('div');
+                        content.style.animation = 'none';
+                        void content.offsetWidth; // Trigger reflow
+                        content.style.animation = 'fadeIn 0.3s ease-out';
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

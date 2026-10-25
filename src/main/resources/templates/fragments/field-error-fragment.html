@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Fragments</title>
+</head>
+<body>
+<!-- This fragment accepts a parameter 'fieldName' and displays error messages for that field -->
+<div th:fragment="fieldError(fieldName)">
+    <div th:if="${#fields.hasErrors(fieldName)}"
+         th:errors="*{__${fieldName}__}"
+         class="text-red-500 text-sm">
+    </div>
+</div>
+</body>
+</html>

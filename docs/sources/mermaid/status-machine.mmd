@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> UNPAID: booking saved
+    UNPAID --> BOOKED: gateway success callback
+    UNPAID --> [*]: payment cancelled (booking removed)
+    BOOKED --> ASSIGNED: rider accepts job
+    ASSIGNED --> PICKED_UP
+    ASSIGNED --> POSTPONED
+    PICKED_UP --> IN_TRANSIT
+    PICKED_UP --> DELIVERED
+    PICKED_UP --> POSTPONED
+    IN_TRANSIT --> DELIVERED
+    IN_TRANSIT --> POSTPONED
+    POSTPONED --> PICKED_UP
+    POSTPONED --> ASSIGNED
+    DELIVERED --> [*]: rider credited, rider freed

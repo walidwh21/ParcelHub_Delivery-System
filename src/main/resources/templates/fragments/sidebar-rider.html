@@ -1,0 +1,40 @@
+<div class="w-64 h-full min-h-screen bg-white dark:bg-gray-800 shadow-lg">
+    <div class="p-6">
+        <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200">Dashboard</h2>
+    </div>
+    <nav class="mt-6">
+        <ul class="space-y-2">
+            <li>
+                <a href="/rider/dashboard" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/rider/current-parcels}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Current Parcels
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/rider/parcels/history}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Delivery History
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/rider/profile-settings}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Profile Settings
+                </a>
+            </li>
+            <li>
+                <form th:action="@{/rider/logout}" method="post" class="w-full">
+                    <button type="submit"
+                            class="block w-full text-left px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</div>
