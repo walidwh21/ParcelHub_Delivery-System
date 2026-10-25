@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} ?: 'ParcelHub | Rider Dashboard'"></title>
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 w-full min-h-screen flex">
+<!-- Sidebar -->
+<div class="w-64 h-full min-h-screen bg-white dark:bg-gray-800 shadow-lg">
+    <div class="p-6">
+        <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200">Dashboard</h2>
+    </div>
+    <nav class="mt-6">
+        <ul class="space-y-2">
+            <li>
+                <a href="/rider/dashboard" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/rider/current-parcels}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Current Parcels
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/rider/parcels/history}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Delivery History
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/rider/profile-settings}" class="block px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    Profile Settings
+                </a>
+            </li>
+            <li>
+                <form th:action="@{/rider/logout}" method="post" class="w-full">
+                    <button type="submit"
+                            class="block w-full text-left px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+<!-- Main Area -->
+<div class="flex-1 flex flex-col ml-64">
+    <!-- Navbar -->
+    <nav class="bg-white shadow fixed top-0 left-64 w-[calc(100%-16rem)] z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Hamburger Menu -->
+            <button id="menu-toggle" class="text-black focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <!-- Profile Button -->
+            <div class="relative">
+                <button id="profile-menu-btn" class="px-2 py-1.5 bg-gray-800 text-white font-semibold rounded-md">
+                    Profile
+                </button>
+                <div id="profile-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2">
+                    <a th:href="@{/rider/profile-settings}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">
+                        Settings
+                    </a>
+                    <form id="logout-form" th:action="@{/rider/logout}" method="POST" class="block">
+                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200">
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mx-auto px-6 py-8" layout:fragment="content">
+        <!-- Place your page-specific content here -->
+        <h2 class="text-2xl font-bold text-gray-800">Welcome to ParcelHub!</h2>
+        <p>This is the default content area.</p>
+    </div>
+</div>
+
+<!-- Extra Scripts -->
+<div layout:fragment="extraScripts">
+    <script>
+        // Toggle profile dropdown
+        document.getElementById('profile-menu-btn').addEventListener('click', function () {
+            document.getElementById('profile-menu-dropdown').classList.toggle('hidden');
+        });
+    </script>
+</div>
+</body>
+</html>

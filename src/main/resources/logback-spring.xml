@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <!-- Load Spring properties -->
+    <springProperty name="LOG_PATH" source="logging.file.path" />
+    <springProperty name="LOG_LEVEL" source="logging.level.root" />
+    <springProperty name="MAX_HISTORY" source="logging.maxHistory" defaultValue="30" />
+    <springProperty name="LOKI_URL" source="loki.url" />
+    <springProperty name="HOSTNAME" source="application.base.url" defaultValue="localhost" />
+
+    <!-- Console Appender -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Rolling File Appender -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Loki log appender -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${LOKI_URL}/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${name},host=${HOSTNAME},level=%level</pattern>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "level":"%level",
+                    "class":"%logger{36}",
+                    "thread":"%thread",
+                    "message": "%message",
+                    "requestId": "%X{X-Request-ID}"
+                    }
+                </pattern>
+            </message>
+        </format>
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="LOKI" />
+    </root>
+
+</configuration>

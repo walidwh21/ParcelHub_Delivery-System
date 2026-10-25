@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Account Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex">
+<!-- Sidebar (if needed) -->
+<div th:replace="~{fragments/sidebar.html}"></div>
+<div class="flex-1 flex flex-col">
+    <div th:replace="~{fragments/navbar.html}"></div>
+    <div class="container h-screen overflow-y-scroll m-3 mx-auto bg-white rounded-md shadow p-8">
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+        <!-- Notice the use of POST method and multipart/form-data for file uploads -->
+        <form method="post" th:action="@{/user/profile-settings}" enctype="multipart/form-data" th:object="${profileUpdateRequest}">
+<!--            &lt;!&ndash; Profile Image &ndash;&gt;-->
+<!--            <div class="space-y-8">-->
+<!--                <div class="text-center">-->
+<!--                    <h2 class="text-2xl font-semibold text-gray-900">Profile</h2>-->
+<!--                    <div class="flex flex-col items-center justify-center gap-y-4 mt-4">-->
+<!--                        <div class="relative">-->
+<!--                            &lt;!&ndash; Clickable Image &ndash;&gt;-->
+<!--                            <label for="file-upload" class="cursor-pointer relative block rounded-full p-1">-->
+<!--                                &lt;!&ndash; If the user already has an image, display it; otherwise show a default &ndash;&gt;-->
+<!--                                <img class="w-20 h-20 rounded-full ring-2 ring-slate-100 object-cover"-->
+<!--                                     th:src="@{${profileUpdateRequest.profileImageUrl} ?: '/images/auth-logo.png'}"-->
+<!--                                     alt="Profile Image">-->
+<!--                                &lt;!&ndash; Overlay Icon &ndash;&gt;-->
+<!--                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 hover:opacity-100 transition-opacity">-->
+<!--                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2"-->
+<!--                                         viewBox="0 0 24 24">-->
+<!--                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>-->
+<!--                                    </svg>-->
+<!--                                </div>-->
+<!--                            </label>-->
+<!--                            &lt;!&ndash; Hidden File Input &ndash;&gt;-->
+<!--                            <input id="file-upload" type="file" name="file" class="hidden">-->
+<!--                        </div>-->
+<!--                        <p class="text-gray-600">Click the image to change the profile photo</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <!-- Personal Information -->
+                <div class="border-t border-gray-200 pt-8">
+                    <div class="space-y-6">
+                        <!-- Full Name -->
+                        <div>
+                            <label for="full-name" class="block text-sm font-medium text-gray-900">Full Name</label>
+                            <div class="mt-2">
+                                <input th:field="*{fullName}" type="text" id="full-name" autocomplete="name"
+                                       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder-gray-400 focus:outline-2 focus:outline-indigo-600" required>
+                            </div>
+                            <!-- Error placeholder for Full Name -->
+                            <div th:if="${#fields.hasErrors('fullName')}" class="text-red-500 text-xs">
+                                <p th:errors="*{fullName}"></p>
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="phone-number" class="block text-sm font-medium text-gray-900">Phone Number</label>
+                            <div class="mt-2">
+                                <input th:field="*{phoneNumber}" placeholder="01XXXXXXXXX" type="tel" id="phone-number" autocomplete="tel"
+                                       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder-gray-400 focus:outline-2 focus:outline-indigo-600">
+                            </div>
+                            <!-- Error placeholder for Phone Number -->
+                            <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-red-500 text-xs">
+                                <p th:errors="*{phoneNumber}"></p>
+                            </div>
+                        </div>
+
+                        <!-- New Password -->
+                        <div>
+                            <label for="new-password" class="block text-sm font-medium text-gray-900">New Password</label>
+                            <div class="mt-2">
+                                <input th:field="*{password}" placeholder="***********" type="password" id="new-password" autocomplete="new-password"
+                                       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder-gray-400 focus:outline-2 focus:outline-indigo-600">
+                            </div>
+                            <!-- Error placeholder for New Password -->
+                            <div th:if="${#fields.hasErrors('password')}" class="text-red-500 text-xs">
+                                <p th:errors="*{password}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- Action Button -->
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <button type="submit"
+                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Preview Selected Image Script -->
+<script>
+    document.getElementById('file-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Update the image src to display the selected image
+                document.querySelector('img[alt="Profile Image"]').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+</body>
+</html>

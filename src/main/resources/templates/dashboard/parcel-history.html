@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{master-layout-user}">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Parcel</title>
+    <link rel="stylesheet" th:href="@{/css/jquery.dataTables.min.css}">
+</head>
+<body>
+<!-- Content Fragment -->
+<div layout:fragment="content" class="container mx-auto p-6">
+    <h2 class="text-xl font-bold mb-4">Parcel History</h2>
+    <table id="parcelHistory" class="display" style="width:100%">
+        <thead>
+        <tr class="bg-gray-800 text-white">
+            <th>Tracking ID</th>
+            <th>PickUp Information</th>
+            <th>Receiver Information</th>
+            <th>Rider Information</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="parcel : ${parcelHistory}">
+            <td th:text="${parcel.trackingId}">TRK123</td>
+            <td>
+                <div>
+                    <span th:text="|${parcel.pickupVillage}, ${parcel.pickupUpazila}, ${parcel.pickupDistrict}, ${parcel.pickupDivision}|"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <strong th:text="${parcel.receiverName}">John Doe</strong><br>
+                    <span th:text="${parcel.receiverPhone}">1234567890</span><br>
+                    <span th:text="${parcel.receiverEmail}">john@example.com</span><br>
+                    <span th:text="|${parcel.receiverVillage}, ${parcel.receiverUpazila}, ${parcel.receiverDistrict}, ${parcel.receiverDivision}|"></span>
+                </div>
+            </td>
+            <td th:text="${parcel.rider != null ? parcel.rider.fullName : 'Not Assigned'}">Rider Name</td>
+            <td th:text="${parcel.status}">BOOKED</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Extra Scripts Fragment -->
+<div layout:fragment="extraScripts">
+    <!-- jQuery (required by DataTables) -->
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <!-- DataTables JS -->
+    <script th:src="@{/js/jquery.dataTables.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#parcelHistory').DataTable({
+                // You can customize your DataTable options here
+                "pageLength": 10,
+                "lengthChange": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

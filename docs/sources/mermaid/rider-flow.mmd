@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor Rider
+    actor Admin
+    participant RC as RiderController
+    participant RS as RiderService
+    participant S as ShipmentService
+    participant DB as PostgreSQL
+
+    Rider->>RC: register + onboarding (documents)
+    RC->>RS: registerRider(), onboardRider()
+    RS->>DB: rider PENDING
+    Admin->>RS: approve / reject
+    RS->>DB: rider VERIFIED
+    Rider->>RC: GET /rider/current-parcels
+    RC->>RS: currentParcelsForRider()
+    RS-->>Rider: open BOOKED parcels
+    Rider->>RC: POST /rider/Accept/{id}
+    RC->>RS: acceptParcelDelivery()
+    RS->>DB: parcel ASSIGNED, rider busy
+    loop until delivered
+        Rider->>RC: update status
+        RC->>S: updateParcelStatus()
+        S->>DB: PICKED_UP, IN_TRANSIT, DELIVERED
+    end
+    S->>DB: add parcel price to rider balance, free rider

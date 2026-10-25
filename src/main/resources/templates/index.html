@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParcelHub - Swift Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'SF Pro Display', 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-teal-100 to-teal-300">
+<!-- Header -->
+<header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-teal-600">ParcelHub</h1>
+    <div class="flex gap-2">
+        <a th:href="@{/auth/login}" class="px-6 py-3 text-teal-600 border border-teal-600 rounded-full mr-2">Login</a>
+        <a th:href="@{/auth/register}" class="px-6 py-3 bg-teal-600 text-white rounded-full">Register</a>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="text-center py-20 bg-teal-500 text-white">
+    <h2 class="text-5xl font-bold">Swift Delivery, Every Time</h2>
+    <p class="text-lg mt-4">Experience seamless parcel delivery with ParcelHub's state-of-the-art logistics network.</p>
+
+</section>
+
+<!-- Become a Rider Section -->
+<section class="py-20 bg-white text-center">
+    <h3 class="text-3xl font-semibold mb-8">Join Our Team</h3>
+    <p class="text-xl text-gray-600 mb-8">Deliver happiness and earn with ParcelHub.</p>
+    <a th:href="@{/rider/register}" class="inline-block px-8 py-4 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 transition duration-300 ease-in-out transform hover:scale-105">
+        Become a Rider
+    </a>
+
+    <a th:href="@{/rider/login}" class="inline-block px-8 py-4 text-teal-600 border border-teal-600 font-bold rounded-full hover:bg-teal-600 hover:text-white transition duration-300 ease-in-out transform hover:scale-105">
+        Rider Login
+    </a>
+</section>
+
+
+
+<!-- How It Works Section -->
+<section class="py-20 text-center">
+    <h3 class="text-3xl font-semibold mb-8">How It Works</h3>
+    <p class="text-xl font-semibold text-teal-600 mb-8">Experience the future of parcel delivery with our cutting-edge features</p>
+    <div class="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto px-4">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-5xl font-extrabold text-teal-600">1</h4>
+            <h4 class="text-xl font-bold mt-2">Packing</h4>
+            <p class="text-gray-600 mt-2">Securely pack your parcel for a safe journey.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-5xl font-extrabold text-teal-600">2</h4>
+            <h4 class="text-xl font-bold mt-2">Book</h4>
+            <p class="text-gray-600 mt-2">Schedule a pickup or drop off at a nearby center.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-5xl font-extrabold text-teal-600">3</h4>
+            <h4 class="text-xl font-bold mt-2">Track</h4>
+            <p class="text-gray-600 mt-2">Monitor your package in real-time.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-5xl font-extrabold text-teal-600">4</h4>
+            <h4 class="text-xl font-bold mt-2">Receive</h4>
+            <p class="text-gray-600 mt-2">Get your package delivered safely to your doorstep.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-teal-900 text-white text-center py-4">
+    <p>&copy; 2025 ParcelHub. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1 @@
+alert("Charts.js loaded!"); // This will show an alert when the script loads.

@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph Clients["Browser clients"]
+        C["Customer portal<br/>/user, /auth"]
+        R["Rider portal<br/>/rider"]
+        A["Admin portal<br/>/admin"]
+    end
+
+    subgraph App["ParcelHub &ndash; Spring Boot 3 application"]
+        direction TB
+        SEC["Spring Security<br/>3 filter chains + remember-me"]
+        CTRL["MVC controllers<br/>Thymeleaf views"]
+        SVC["Services<br/>Shipment | Rider | User | Gateway | Files"]
+        REPO["Spring Data JPA repositories"]
+        SEC --> CTRL --> SVC --> REPO
+    end
+
+    DB[("PostgreSQL<br/>schema managed by Flyway")]
+    FS[["Local file storage<br/>rider documents"]]
+    GW{{"Payment gateway<br/>init + IPN validation"}}
+
+    subgraph Obs["Observability"]
+        OT["OpenTelemetry (OTLP)"] --> TR["Trace UI"]
+        MP["Prometheus metrics"] --> GF["Dashboards"]
+        LK["Loki log appender"]
+    end
+
+    C --> SEC
+    R --> SEC
+    A --> SEC
+    REPO --> DB
+    SVC --> FS
+    SVC <--> GW
+    App -.-> OT
+    App -.-> MP
+    App -.-> LK
