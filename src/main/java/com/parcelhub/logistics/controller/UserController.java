@@ -67,7 +67,11 @@ public class UserController {
 
 	@PostMapping("/book-parcel")
 	public String handleParcelBooking(
+<<<<<<< HEAD
 			@ModelAttribute("bookingRequest") @Valid ParcelBookingRequest bookingRequest,
+=======
+			@ModelAttribute @Valid ParcelBookingRequest bookingRequest,
+>>>>>>> e31cd57e8ec2a43ed0b8b807dd1482cf3231b057
 			BindingResult bindingResult,
 			Model model) {
 		if (bindingResult.hasErrors()) {
