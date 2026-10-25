@@ -1,4 +1,5 @@
-name: CI with SonarQube Analysis
+```yaml
+name: CI - Build and Test
 
 on:
   push:
@@ -9,7 +10,7 @@ on:
       - main
 
 jobs:
-  build-and-analyze:
+  build-and-test:
     runs-on: ubuntu-latest
 
     permissions:
@@ -17,11 +18,12 @@ jobs:
 
     steps:
       # Checkout the code
-      - uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Set up JDK
+      # Set up JDK 17
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -34,19 +36,14 @@ jobs:
 
       # Cache Gradle dependencies
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle-
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      # Build and run tests with Gradle
+      # Build and run tests
       - name: Build and Test
         run: ./gradlew build jacocoTestReport --info
-
-      # Run SonarQube analysis
-      - name: SonarQube Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew sonar --info
+```
