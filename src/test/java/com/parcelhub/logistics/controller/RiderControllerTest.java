@@ -6,16 +6,16 @@ import static org.mockito.Mockito.*;
 
 import com.parcelhub.logistics.dto.request.RiderOnboardingRequest;
 import com.parcelhub.logistics.dto.request.RiderRegistrationRequest;
-import com.parcelhub.logistics.dto.response.RiderDashboardView;
 import com.parcelhub.logistics.dto.response.OpenParcelView;
+import com.parcelhub.logistics.dto.response.RiderDashboardView;
 import com.parcelhub.logistics.entity.Parcel;
 import com.parcelhub.logistics.entity.Rider;
 import com.parcelhub.logistics.enums.ParcelStatus;
 import com.parcelhub.logistics.enums.VerificationStatus;
 import com.parcelhub.logistics.exception.AlreadyExistsException;
 import com.parcelhub.logistics.exception.ParcelNotFoundException;
-import com.parcelhub.logistics.service.ShipmentService;
 import com.parcelhub.logistics.service.RiderService;
+import com.parcelhub.logistics.service.ShipmentService;
 import java.math.BigDecimal;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;

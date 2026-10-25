@@ -79,12 +79,10 @@ public class GatewayPaymentService implements PaymentService {
 
 	private ResponseEntity<GatewayInitResponse> sendPaymentRequest(
 			HttpEntity<MultiValueMap<String, String>> requestEntity) {
-		return restTemplate.postForEntity(
-				paymentInitializationUrl, requestEntity, GatewayInitResponse.class);
+		return restTemplate.postForEntity(paymentInitializationUrl, requestEntity, GatewayInitResponse.class);
 	}
 
-	private String handlePaymentResponse(
-			ResponseEntity<GatewayInitResponse> responseEntity, String paymentMethod) {
+	private String handlePaymentResponse(ResponseEntity<GatewayInitResponse> responseEntity, String paymentMethod) {
 		if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
 			throw new GatewayInitializationException("Failed to send payment request");
 		}

@@ -4,14 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.parcelhub.logistics.dto.request.ShippingQuoteRequest;
 import com.parcelhub.logistics.dto.request.ParcelBookingRequest;
+import com.parcelhub.logistics.dto.request.ShippingQuoteRequest;
 import com.parcelhub.logistics.entity.*;
 import com.parcelhub.logistics.entity.Rider;
 import com.parcelhub.logistics.enums.ParcelStatus;
+import com.parcelhub.logistics.repository.ParcelCategoryRepository;
 import com.parcelhub.logistics.repository.ParcelRepository;
 import com.parcelhub.logistics.repository.PaymentRepository;
-import com.parcelhub.logistics.repository.ParcelCategoryRepository;
 import com.parcelhub.logistics.repository.RiderRepository;
 import com.parcelhub.logistics.repository.UserRepository;
 import com.parcelhub.logistics.util.SessionUtil;
@@ -249,7 +249,8 @@ class ShipmentServiceTest {
 		when(parcelRepository.findById(parcelId)).thenReturn(Optional.of(parcel));
 
 		assertThrows(
-				IllegalStateException.class, () -> shipmentService.updateParcelStatus(parcelId, ParcelStatus.DELIVERED));
+				IllegalStateException.class,
+				() -> shipmentService.updateParcelStatus(parcelId, ParcelStatus.DELIVERED));
 	}
 
 	@Test
@@ -261,7 +262,8 @@ class ShipmentServiceTest {
 		when(parcelRepository.findById(parcelId)).thenReturn(Optional.of(parcel));
 
 		assertThrows(
-				IllegalStateException.class, () -> shipmentService.updateParcelStatus(parcelId, ParcelStatus.DELIVERED));
+				IllegalStateException.class,
+				() -> shipmentService.updateParcelStatus(parcelId, ParcelStatus.DELIVERED));
 	}
 
 	@Test

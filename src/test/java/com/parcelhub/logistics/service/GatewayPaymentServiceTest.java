@@ -79,8 +79,7 @@ class GatewayPaymentServiceTest {
 		desc.setRedirectGatewayURL("http://redirect.url");
 		responseDto.setDesc(Collections.singletonList(desc));
 
-		ResponseEntity<GatewayInitResponse> responseEntity =
-				new ResponseEntity<>(responseDto, HttpStatus.OK);
+		ResponseEntity<GatewayInitResponse> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.OK);
 		when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(GatewayInitResponse.class)))
 				.thenReturn(responseEntity);
 
@@ -94,13 +93,11 @@ class GatewayPaymentServiceTest {
 		responseDto.setStatus("FAILED");
 		responseDto.setFailedreason("Invalid data");
 
-		ResponseEntity<GatewayInitResponse> responseEntity =
-				new ResponseEntity<>(responseDto, HttpStatus.OK);
+		ResponseEntity<GatewayInitResponse> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.OK);
 		when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(GatewayInitResponse.class)))
 				.thenReturn(responseEntity);
 
-		Exception exception =
-				assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
+		Exception exception = assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
 		assertTrue(exception.getMessage().contains("Failed: Invalid data"));
 	}
 
@@ -113,14 +110,13 @@ class GatewayPaymentServiceTest {
 		desc.setRedirectGatewayURL("http://redirect.url");
 		responseDto.setDesc(Collections.singletonList(desc));
 
-		ResponseEntity<GatewayInitResponse> responseEntity =
-				new ResponseEntity<>(responseDto, HttpStatus.OK);
+		ResponseEntity<GatewayInitResponse> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.OK);
 		when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(GatewayInitResponse.class)))
 				.thenReturn(responseEntity);
 
 		bookingRequest.setPaymentMethod("visa");
-		RuntimeException exception = assertThrows(
-				RuntimeException.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
+		RuntimeException exception =
+				assertThrows(RuntimeException.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
 		assertEquals("Payment method not found", exception.getMessage());
 	}
 
@@ -131,8 +127,7 @@ class GatewayPaymentServiceTest {
 		when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(GatewayInitResponse.class)))
 				.thenReturn(responseEntity);
 
-		Exception exception =
-				assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
+		Exception exception = assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
 		assertTrue(exception.getMessage().contains("Failed to send payment request"));
 	}
 
@@ -142,8 +137,7 @@ class GatewayPaymentServiceTest {
 		when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(GatewayInitResponse.class)))
 				.thenReturn(responseEntity);
 
-		Exception exception =
-				assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
+		Exception exception = assertThrows(Exception.class, () -> paymentService.getPaymentUrl(bookingRequest, sender));
 		assertTrue(exception.getMessage().contains("Failed: No response body"));
 	}
 

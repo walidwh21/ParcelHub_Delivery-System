@@ -48,13 +48,12 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
-		http.securityMatcher("/admin/**")
-				.authorizeHttpRequests(rules -> rules.requestMatchers(ADMIN_LOGIN)
-						.permitAll()
-						.requestMatchers("/admin/**")
-						.hasRole("ADMIN")
-						.anyRequest()
-						.authenticated());
+		http.securityMatcher("/admin/**").authorizeHttpRequests(rules -> rules.requestMatchers(ADMIN_LOGIN)
+				.permitAll()
+				.requestMatchers("/admin/**")
+				.hasRole("ADMIN")
+				.anyRequest()
+				.authenticated());
 		return applyPortalFlow(
 						http,
 						new PortalFlow(
@@ -71,13 +70,13 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain userSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.securityMatcher("/user/**", "/auth/**", "/user/logout", "parcel/shipping-cost", "/")
-				.authorizeHttpRequests(rules -> rules.requestMatchers(
-								USER_LOGIN, "parcel/shipping-cost", "/", "/auth/register")
-						.permitAll()
-						.requestMatchers("/user/**")
-						.hasRole("USER")
-						.anyRequest()
-						.authenticated());
+				.authorizeHttpRequests(
+						rules -> rules.requestMatchers(USER_LOGIN, "parcel/shipping-cost", "/", "/auth/register")
+								.permitAll()
+								.requestMatchers("/user/**")
+								.hasRole("USER")
+								.anyRequest()
+								.authenticated());
 		return applyPortalFlow(
 						http,
 						new PortalFlow(
@@ -93,14 +92,13 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain riderSecurityFilterChain(HttpSecurity http) throws Exception {
-		http.securityMatcher("/rider/**")
-				.authorizeHttpRequests(rules -> rules.requestMatchers(
-								RIDER_LOGIN, "/rider/register", "/rider/onboarding/**")
-						.permitAll()
-						.requestMatchers("/rider/**")
-						.hasRole("RIDER")
-						.anyRequest()
-						.authenticated());
+		http.securityMatcher("/rider/**").authorizeHttpRequests(rules -> rules.requestMatchers(
+						RIDER_LOGIN, "/rider/register", "/rider/onboarding/**")
+				.permitAll()
+				.requestMatchers("/rider/**")
+				.hasRole("RIDER")
+				.anyRequest()
+				.authenticated());
 		return applyPortalFlow(
 						http,
 						new PortalFlow(
@@ -124,8 +122,7 @@ public class SecurityConfig {
 						.loginProcessingUrl(flow.loginProcessingUrl())
 						.defaultSuccessUrl(flow.successUrl())
 						.failureUrl(flow.failureUrl()))
-				.rememberMe(remember -> remember
-						.key(rememberMeKey)
+				.rememberMe(remember -> remember.key(rememberMeKey)
 						.rememberMeParameter(REMEMBER_ME_PARAM)
 						.tokenValiditySeconds(REMEMBER_ME_SECONDS)
 						.rememberMeCookieName(flow.rememberMeCookie()))

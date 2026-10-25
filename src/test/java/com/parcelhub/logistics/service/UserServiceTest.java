@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.parcelhub.logistics.dto.request.ProfileUpdateRequest;
 import com.parcelhub.logistics.dto.request.AccountRegistrationRequest;
+import com.parcelhub.logistics.dto.request.ProfileUpdateRequest;
 import com.parcelhub.logistics.entity.Account;
 import com.parcelhub.logistics.enums.Role;
 import com.parcelhub.logistics.exception.AlreadyExistsException;

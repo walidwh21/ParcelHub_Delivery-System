@@ -1,7 +1,7 @@
 package com.parcelhub.logistics.service;
 
-import com.parcelhub.logistics.dto.request.ProfileUpdateRequest;
 import com.parcelhub.logistics.dto.request.AccountRegistrationRequest;
+import com.parcelhub.logistics.dto.request.ProfileUpdateRequest;
 import com.parcelhub.logistics.entity.Account;
 import com.parcelhub.logistics.enums.Role;
 import com.parcelhub.logistics.exception.AlreadyExistsException;

@@ -17,8 +17,7 @@ public class ShippingQuoteController {
 	public final ShipmentService shipmentService;
 
 	@PostMapping("/shipping-cost")
-	public ResponseEntity<Double> estimateShippingCost(
-			@Valid @RequestBody ShippingQuoteRequest quoteRequest) {
+	public ResponseEntity<Double> estimateShippingCost(@Valid @RequestBody ShippingQuoteRequest quoteRequest) {
 		return ResponseEntity.ok().body(shipmentService.estimateShippingCost(quoteRequest));
 	}
 }

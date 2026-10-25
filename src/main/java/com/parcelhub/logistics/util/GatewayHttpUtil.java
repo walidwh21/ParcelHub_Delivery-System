@@ -1,8 +1,8 @@
 package com.parcelhub.logistics.util;
 
-import com.parcelhub.logistics.dto.paymentapiresponse.GatewayValidationResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.parcelhub.logistics.dto.paymentapiresponse.GatewayValidationResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

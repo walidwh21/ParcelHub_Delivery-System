@@ -6,8 +6,8 @@ import com.parcelhub.logistics.dto.response.OpenParcelView;
 import com.parcelhub.logistics.entity.Parcel;
 import com.parcelhub.logistics.entity.Rider;
 import com.parcelhub.logistics.enums.ParcelStatus;
-import com.parcelhub.logistics.service.ShipmentService;
 import com.parcelhub.logistics.service.RiderService;
+import com.parcelhub.logistics.service.ShipmentService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -56,8 +56,7 @@ public class RiderController {
 
 	@PostMapping("/register")
 	public String submitRegistrationForm(
-			@Valid @ModelAttribute("riderRegistrationRequestDTO")
-					RiderRegistrationRequest riderRegistrationRequestDTO,
+			@Valid @ModelAttribute("riderRegistrationRequestDTO") RiderRegistrationRequest riderRegistrationRequestDTO,
 			BindingResult bindingResult,
 			Model model,
 			RedirectAttributes redirectAttributes) {
