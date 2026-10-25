@@ -4,8 +4,8 @@ import com.parcelhub.logistics.dto.request.ParcelBookingRequest;
 import com.parcelhub.logistics.dto.request.ProfileUpdateRequest;
 import com.parcelhub.logistics.entity.Parcel;
 import com.parcelhub.logistics.repository.ParcelCategoryRepository;
-import com.parcelhub.logistics.service.ShipmentService;
 import com.parcelhub.logistics.service.GatewayPaymentService;
+import com.parcelhub.logistics.service.ShipmentService;
 import com.parcelhub.logistics.service.UserService;
 import com.parcelhub.logistics.util.ProfileFormUtil;
 import jakarta.validation.Valid;
@@ -67,11 +67,7 @@ public class UserController {
 
 	@PostMapping("/book-parcel")
 	public String handleParcelBooking(
-<<<<<<< HEAD
 			@ModelAttribute("bookingRequest") @Valid ParcelBookingRequest bookingRequest,
-=======
-			@ModelAttribute @Valid ParcelBookingRequest bookingRequest,
->>>>>>> e31cd57e8ec2a43ed0b8b807dd1482cf3231b057
 			BindingResult bindingResult,
 			Model model) {
 		if (bindingResult.hasErrors()) {
@@ -88,8 +84,7 @@ public class UserController {
 		shipmentService.recordPendingPayment(parcel, bookingRequest);
 
 		// fetch payment gateway url
-		String paymentOperationUrl =
-				gatewayPaymentService.getPaymentUrl(bookingRequest, parcel.getSender());
+		String paymentOperationUrl = gatewayPaymentService.getPaymentUrl(bookingRequest, parcel.getSender());
 
 		return "redirect:" + paymentOperationUrl;
 	}
